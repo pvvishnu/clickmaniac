@@ -164,84 +164,18 @@ async function toggleFullscreenCanvas() {
 }
 
 function initInfiniteCanvas() {
-  if (!galleryViewport || !galleryGrid || infiniteCanvasReady) {
+  if (!galleryViewport || infiniteCanvasReady) {
     return;
   }
 
   infiniteCanvasReady = true;
-  galleryGrid.classList.add("watch-grid");
-  galleryGrid.style.width = `${watchGridConfig.width}px`;
-  galleryGrid.style.height = `${watchGridConfig.height}px`;
-  updateGridTransform();
-  orbitalAnimationFrame = window.requestAnimationFrame(animateGrid);
-
-  galleryViewport.addEventListener("pointerdown", (event) => {
-    if (event.button !== 0) {
-      return;
-    }
-
-    if (event.target.closest("button, a, input, textarea, label")) {
-      return;
-    }
-
-    watchGridState.dragging = true;
-    watchGridState.dragStartX = event.clientX;
-    watchGridState.dragStartY = event.clientY;
-    watchGridState.dragOriginX = watchGridState.targetX;
-    watchGridState.dragOriginY = watchGridState.targetY;
-    galleryViewport.classList.add("panning");
-  });
-
-  window.addEventListener("pointermove", (event) => {
-    if (watchGridState.dragging) {
-      const deltaX = event.clientX - watchGridState.dragStartX;
-      const deltaY = event.clientY - watchGridState.dragStartY;
-      watchGridState.targetX = clamp(watchGridState.dragOriginX + deltaX, -watchGridConfig.maxPanX, watchGridConfig.maxPanX);
-      watchGridState.targetY = clamp(watchGridState.dragOriginY + deltaY, -watchGridConfig.maxPanY, watchGridConfig.maxPanY);
-      watchGridState.targetRotation = clamp(watchGridState.targetX / 90, -9, 9);
-      return;
-    }
-
-    const rect = galleryViewport.getBoundingClientRect();
-    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-
-    watchGridState.targetX = clamp(-normalizedX * 180, -watchGridConfig.maxPanX, watchGridConfig.maxPanX);
-    watchGridState.targetY = clamp(-normalizedY * 130, -watchGridConfig.maxPanY, watchGridConfig.maxPanY);
-    watchGridState.targetRotation = clamp(normalizedX * 4.5, -9, 9);
-  });
-
-  window.addEventListener("pointerup", () => {
-    if (!watchGridState.dragging) {
-      return;
-    }
-
-    watchGridState.dragging = false;
-    galleryViewport.classList.remove("panning");
-  });
-
-  galleryViewport.addEventListener("mouseleave", () => {
-    if (watchGridState.dragging) {
-      return;
-    }
-
-    watchGridState.targetX = 0;
-    watchGridState.targetY = 0;
-    watchGridState.targetRotation = 0;
-  });
-
-  galleryViewport.addEventListener("wheel", (event) => {
-    event.preventDefault();
-    const factor = event.deltaY > 0 ? 0.95 : 1.05;
-    watchGridState.targetScale = clamp(
-      watchGridState.targetScale * factor,
-      watchGridConfig.minScale,
-      watchGridConfig.maxScale
-    );
-  }, { passive: false });
-
   if (resetCanvasBtn) {
-    resetCanvasBtn.addEventListener("click", resetGridView);
+    resetCanvasBtn.addEventListener("click", () => {
+      activeFilter = "All";
+      updateFilterButtons();
+      renderGallery(allPhotos, activeFilter);
+      galleryViewport.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    });
   }
 
   if (fullscreenCanvasBtn) {
@@ -664,20 +598,12 @@ function renderGallery(photos, filter) {
   }
 
   galleryGrid.innerHTML = "";
-  galleryGrid.classList.remove("lookbook-mode", "infinite-canvas");
-  galleryGrid.classList.add("watch-grid");
-  const gridTiles = buildWatchGridTiles(filtered);
-
-  gridTiles.forEach((photo, index) => {
+  galleryGrid.classList.remove("lookbook-mode", "infinite-canvas", "watch-grid");
+  filtered.forEach((photo, index) => {
     const card = document.createElement("article");
-    const cardId = `photo-tile-${index + 1}`;
-    const position = computeWatchGridPosition(index);
-    const tileSize = watchGridConfig.baseTileSize - Math.min(70, Math.floor(index / 6) * 10);
+    const cardId = `photo-${index + 1}`;
     card.className = "photo-card";
     card.id = cardId;
-    card.style.left = `${position.x}px`;
-    card.style.top = `${position.y}px`;
-    card.style.setProperty("--tile-size", `${Math.max(138, tileSize)}px`);
 
     card.innerHTML = `
       <button aria-label="Open ${photo.title}">
@@ -703,8 +629,6 @@ function renderGallery(photos, filter) {
     card.appendChild(shareButton);
     galleryGrid.appendChild(card);
   });
-
-  updateGridTransform();
 }
 
 function openLightbox(photo, cardId) {
