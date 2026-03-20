@@ -7,17 +7,40 @@
   <meta name="description" content="Photography portfolio by Vishnu Prasad." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@500;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="ambient ambient-1"></div>
   <div class="ambient ambient-2"></div>
+  <div id="themeVeil" class="theme-veil" aria-hidden="true"></div>
 
   <header class="site-header">
     <div class="brand">
       <p class="eyebrow">Photography Portfolio</p>
       <h1>Vishnu Prasad</h1>
+    </div>
+    <div class="control-stack">
+      <div class="theme-controls">
+        <label for="themePicker">Theme</label>
+        <select id="themePicker" aria-label="Choose portfolio theme">
+          <option value="editorial-burn">Editorial Burn</option>
+          <option value="mono-noir">Mono Noir</option>
+          <option value="sunset-pop">Sunset Pop</option>
+        </select>
+      </div>
+      <div class="switch-controls" role="group" aria-label="Display controls">
+        <label class="switch">
+          <input type="checkbox" id="autoTheme" />
+          <span>Auto Theme</span>
+        </label>
+        <label class="preset-select-wrap" for="transitionPreset">Transition</label>
+        <select id="transitionPreset" class="preset-select" aria-label="Theme transition style">
+          <option value="minimal">Minimal</option>
+          <option value="cinema" selected>Cinema</option>
+        </select>
+        <button id="layoutToggle" class="layout-toggle" type="button" aria-pressed="false">Lookbook Mode: Off</button>
+      </div>
     </div>
     <nav>
       <a href="#gallery">Gallery</a>
@@ -30,6 +53,7 @@
     <section class="hero">
       <p class="kicker">Visual stories in still frames</p>
       <h2>Portraits, landscapes, and moments that feel alive.</h2>
+      <p id="themeLine" class="hero-copy">Current mood: Editorial Burn</p>
       <a class="cta" href="#gallery">Explore Work</a>
     </section>
 
