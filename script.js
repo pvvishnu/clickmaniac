@@ -55,6 +55,8 @@ let orbitalAnimationFrame = 0;
 const watchGridConfig = {
   width: 3600,
   height: 2600,
+  centerX: 1800,
+  centerY: 1300,
   radiusStepX: 320,
   radiusStepY: 270,
   minScale: 0.82,
@@ -118,7 +120,7 @@ function resetGridView() {
 
 function computeWatchGridPosition(index) {
   if (index === 0) {
-    return { x: 0, y: 0 };
+    return { x: watchGridConfig.centerX, y: watchGridConfig.centerY };
   }
 
   let remaining = index;
@@ -134,8 +136,8 @@ function computeWatchGridPosition(index) {
   const y = Math.sin(angle) * ring * watchGridConfig.radiusStepY;
 
   return {
-    x: x + (((index * 37) % 40) - 20),
-    y: y + (((index * 53) % 44) - 22)
+    x: watchGridConfig.centerX + x + (((index * 37) % 40) - 20),
+    y: watchGridConfig.centerY + y + (((index * 53) % 44) - 22)
   };
 }
 
