@@ -44,6 +44,7 @@
     </div>
     <nav>
       <a href="#gallery">Gallery</a>
+      <a href="#community">Community</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -63,6 +64,48 @@
         <div id="filters" class="filters"></div>
       </div>
       <div id="galleryGrid" class="gallery-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="community" class="community">
+      <div class="section-head">
+        <h3>Community</h3>
+      </div>
+      <div class="community-grid">
+        <article class="share-panel">
+          <h4>Share This Portfolio</h4>
+          <p>Help more people discover these visual stories.</p>
+          <div class="share-actions">
+            <button class="share-btn" type="button" data-share-platform="x">Share on X</button>
+            <button class="share-btn" type="button" data-share-platform="linkedin">Share on LinkedIn</button>
+            <button class="share-btn" type="button" data-share-platform="facebook">Share on Facebook</button>
+            <button class="share-btn" type="button" data-share-platform="whatsapp">Share on WhatsApp</button>
+            <button id="nativeShareBtn" class="share-btn" type="button">More Share Options</button>
+            <button id="copyLinkBtn" class="share-btn" type="button">Copy Link</button>
+          </div>
+          <p id="shareStatus" class="micro-status" role="status" aria-live="polite"></p>
+        </article>
+
+        <article class="comments-panel">
+          <h4>Viewer Comments</h4>
+          <div id="giscusThread" class="giscus-thread" aria-live="polite"></div>
+          <div id="localCommentsFallback" class="local-comments-fallback">
+            <form id="commentForm" class="comment-form">
+              <label>
+                Name
+                <input id="commentName" name="name" type="text" maxlength="50" placeholder="Your name" />
+              </label>
+              <label>
+                Comment
+                <textarea id="commentMessage" name="message" rows="4" maxlength="500" placeholder="Share your thoughts on the gallery"></textarea>
+              </label>
+              <button class="comment-submit" type="submit">Post Comment</button>
+              <p id="commentStatus" class="micro-status" role="status" aria-live="polite"></p>
+            </form>
+            <div id="commentsList" class="comments-list" aria-live="polite"></div>
+            <p class="comments-note">Local fallback mode is active. Configure Giscus IDs to enable global shared comments.</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section id="about" class="about">

@@ -12,6 +12,17 @@ const autoThemeToggle = document.getElementById("autoTheme");
 const layoutToggle = document.getElementById("layoutToggle");
 const themeVeil = document.getElementById("themeVeil");
 const transitionPreset = document.getElementById("transitionPreset");
+const shareButtons = document.querySelectorAll("[data-share-platform]");
+const nativeShareBtn = document.getElementById("nativeShareBtn");
+const copyLinkBtn = document.getElementById("copyLinkBtn");
+const shareStatus = document.getElementById("shareStatus");
+const commentForm = document.getElementById("commentForm");
+const commentName = document.getElementById("commentName");
+const commentMessage = document.getElementById("commentMessage");
+const commentsList = document.getElementById("commentsList");
+const commentStatus = document.getElementById("commentStatus");
+const giscusThread = document.getElementById("giscusThread");
+const localCommentsFallback = document.getElementById("localCommentsFallback");
 
 const themeLabels = {
   "editorial-burn": "Editorial Burn",
@@ -29,12 +40,254 @@ const defaultTheme = "editorial-burn";
 const autoThemeStorageKey = "portfolio-auto-theme";
 const layoutStorageKey = "portfolio-lookbook";
 const transitionPresetStorageKey = "portfolio-transition-preset";
+const commentsStorageKey = "portfolio-comments-v1";
 const defaultTransitionPreset = "cinema";
+
+const giscusConfig = {
+  repo: "pvvishnu/clickmaniac",
+  repoId: "R_kgDORryDpQ",
+  category: "General",
+  categoryId: "DIC_kwDORryDpc4C44X3",
+  mapping: "pathname",
+  strict: "0",
+  reactionsEnabled: "1",
+  emitMetadata: "0",
+  inputPosition: "bottom",
+  theme: "light",
+  lang: "en"
+};
 
 let allPhotos = [];
 let activeFilter = "All";
 let autoThemeInterval = null;
 let lookbookMode = false;
+let viewerComments = [];
+
+function hasGiscusConfig() {
+  return Boolean(
+    giscusConfig.repo &&
+    giscusConfig.repoId &&
+    giscusConfig.category &&
+    giscusConfig.categoryId
+  );
+}
+
+function initGiscusThread() {
+  if (!giscusThread) {
+    return false;
+  }
+
+  if (!hasGiscusConfig()) {
+    return false;
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://giscus.app/client.js";
+  script.async = true;
+  script.crossOrigin = "anonymous";
+  script.setAttribute("data-repo", giscusConfig.repo);
+  script.setAttribute("data-repo-id", giscusConfig.repoId);
+  script.setAttribute("data-category", giscusConfig.category);
+  script.setAttribute("data-category-id", giscusConfig.categoryId);
+  script.setAttribute("data-mapping", giscusConfig.mapping);
+  script.setAttribute("data-strict", giscusConfig.strict);
+  script.setAttribute("data-reactions-enabled", giscusConfig.reactionsEnabled);
+  script.setAttribute("data-emit-metadata", giscusConfig.emitMetadata);
+  script.setAttribute("data-input-position", giscusConfig.inputPosition);
+  script.setAttribute("data-theme", giscusConfig.theme);
+  script.setAttribute("data-lang", giscusConfig.lang);
+  script.setAttribute("data-loading", "lazy");
+
+  giscusThread.innerHTML = "";
+  giscusThread.appendChild(script);
+
+  if (localCommentsFallback) {
+    localCommentsFallback.hidden = true;
+  }
+
+  return true;
+}
+
+function updateStatus(target, message) {
+  if (target) {
+    target.textContent = message;
+  }
+}
+
+function buildShareUrl(platform) {
+  const pageUrl = encodeURIComponent(window.location.href);
+  const pageTitle = encodeURIComponent(document.title);
+
+  if (platform === "x") {
+    return `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+  }
+
+  if (platform === "linkedin") {
+    return `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+  }
+
+  if (platform === "facebook") {
+    return `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+  }
+
+  if (platform === "whatsapp") {
+    return `https://api.whatsapp.com/send?text=${pageTitle}%20${pageUrl}`;
+  }
+
+  return "";
+}
+
+async function copyPortfolioLink() {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    updateStatus(shareStatus, "Link copied. Thanks for sharing.");
+  } catch (error) {
+    updateStatus(shareStatus, "Could not copy link automatically.");
+  }
+}
+
+function initShareOptions() {
+  shareButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const platform = button.getAttribute("data-share-platform");
+      const shareUrl = buildShareUrl(platform);
+
+      if (!shareUrl) {
+        return;
+      }
+
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+      updateStatus(shareStatus, "Share window opened.");
+    });
+  });
+
+  if (copyLinkBtn) {
+    copyLinkBtn.addEventListener("click", copyPortfolioLink);
+  }
+
+  if (nativeShareBtn && navigator.share) {
+    nativeShareBtn.addEventListener("click", async () => {
+      try {
+        await navigator.share({
+          title: document.title,
+          text: "Take a look at this photography portfolio.",
+          url: window.location.href
+        });
+        updateStatus(shareStatus, "Shared successfully.");
+      } catch (error) {
+        if (error && error.name !== "AbortError") {
+          updateStatus(shareStatus, "Share action was not completed.");
+        }
+      }
+    });
+  } else if (nativeShareBtn) {
+    nativeShareBtn.hidden = true;
+  }
+}
+
+function readStoredComments() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(commentsStorageKey) || "[]");
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter((entry) => (
+      typeof entry === "object" &&
+      typeof entry.name === "string" &&
+      typeof entry.message === "string" &&
+      typeof entry.createdAt === "string"
+    ));
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveComments() {
+  localStorage.setItem(commentsStorageKey, JSON.stringify(viewerComments));
+}
+
+function renderComments() {
+  if (!commentsList) {
+    return;
+  }
+
+  commentsList.innerHTML = "";
+
+  if (viewerComments.length === 0) {
+    const emptyState = document.createElement("p");
+    emptyState.className = "comment-empty";
+    emptyState.textContent = "No comments yet. Be the first to post one.";
+    commentsList.appendChild(emptyState);
+    return;
+  }
+
+  viewerComments.forEach((entry) => {
+    const item = document.createElement("article");
+    item.className = "comment-item";
+
+    const header = document.createElement("div");
+    header.className = "comment-meta";
+
+    const author = document.createElement("strong");
+    author.textContent = entry.name;
+
+    const timestamp = document.createElement("span");
+    timestamp.textContent = new Date(entry.createdAt).toLocaleString();
+
+    const body = document.createElement("p");
+    body.className = "comment-body";
+    body.textContent = entry.message;
+
+    header.appendChild(author);
+    header.appendChild(timestamp);
+    item.appendChild(header);
+    item.appendChild(body);
+    commentsList.appendChild(item);
+  });
+}
+
+function initComments() {
+  if (initGiscusThread()) {
+    return;
+  }
+
+  if (commentStatus) {
+    updateStatus(commentStatus, "Global comments are available after adding Giscus repo and category IDs in script.js.");
+  }
+
+  viewerComments = readStoredComments();
+  renderComments();
+
+  if (!commentForm || !commentMessage) {
+    return;
+  }
+
+  commentForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const nameValue = commentName && commentName.value.trim() ? commentName.value.trim() : "Anonymous";
+    const messageValue = commentMessage.value.trim();
+
+    if (messageValue.length < 3) {
+      updateStatus(commentStatus, "Please write a slightly longer comment.");
+      return;
+    }
+
+    viewerComments.unshift({
+      name: nameValue.slice(0, 50),
+      message: messageValue.slice(0, 500),
+      createdAt: new Date().toISOString()
+    });
+
+    viewerComments = viewerComments.slice(0, 60);
+    saveComments();
+    renderComments();
+    commentForm.reset();
+    updateStatus(commentStatus, "Comment posted.");
+  });
+}
 
 function getTransitionDuration() {
   const preset = document.body.dataset.veilStyle || defaultTransitionPreset;
@@ -332,4 +585,6 @@ document.addEventListener("keydown", (event) => {
 });
 
 initTheme();
+initShareOptions();
+initComments();
 loadPhotos();

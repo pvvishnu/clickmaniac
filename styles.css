@@ -323,6 +323,7 @@ main {
 }
 
 .gallery-section,
+.community,
 .about,
 .contact {
   margin-top: 2rem;
@@ -342,12 +343,135 @@ main {
 }
 
 .section-head h3,
+.community h3,
 .about h3,
 .contact h3 {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2rem);
   letter-spacing: 0.02em;
+}
+
+.community-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.share-panel,
+.comments-panel {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  padding: 1rem;
+}
+
+.giscus-thread {
+  min-height: 140px;
+}
+
+.local-comments-fallback {
+  margin-top: 0.75rem;
+}
+
+.share-panel h4,
+.comments-panel h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+}
+
+.share-panel p,
+.comments-panel p {
+  color: var(--muted);
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.share-btn,
+.comment-submit {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.44rem 0.8rem;
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.comment-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.comment-form label {
+  display: grid;
+  gap: 0.28rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.comment-form input,
+.comment-form textarea {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--ink);
+  font: inherit;
+  padding: 0.6rem;
+}
+
+.comment-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.comments-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.comment-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.comment-meta strong {
+  font-size: 0.9rem;
+}
+
+.comment-meta span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.comment-body {
+  margin: 0.45rem 0 0;
+}
+
+.micro-status,
+.comments-note,
+.comment-empty {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .filters {
@@ -611,6 +735,10 @@ body[data-theme="sunset-pop"] .lightbox {
     flex-wrap: wrap;
   }
 
+  .community-grid {
+    grid-template-columns: 1fr;
+  }
+
   .gallery-grid.lookbook-mode {
     grid-auto-rows: 115px;
   }
@@ -636,6 +764,11 @@ body[data-theme="sunset-pop"] .lightbox {
   }
 
   .layout-toggle {
+    width: 100%;
+  }
+
+  .share-btn,
+  .comment-submit {
     width: 100%;
   }
 

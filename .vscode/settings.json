@@ -4,6 +4,8 @@
         "git commit": true,
         "git push": true,
         "Test-Path": true,
-        "git add": true
+        "git add": true,
+        "git remote": true,
+        "git rev-parse": true
     }
 }
