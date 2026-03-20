@@ -146,6 +146,51 @@ async function copyPortfolioLink() {
   }
 }
 
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function buildPhotoSharePayload(photo, cardId) {
+  const photoTitle = photo.title || "Untitled";
+  const url = new URL(window.location.href);
+  url.hash = cardId;
+
+  return {
+    title: `${photoTitle} | ${document.title}`,
+    text: `Check out this photo: ${photoTitle}`,
+    url: url.toString()
+  };
+}
+
+async function sharePhoto(photo, cardId) {
+  const payload = buildPhotoSharePayload(photo, cardId);
+
+  if (navigator.share) {
+    try {
+      await navigator.share(payload);
+      updateStatus(shareStatus, `Shared ${photo.title || "photo"}.`);
+      return;
+    } catch (error) {
+      if (error && error.name === "AbortError") {
+        return;
+      }
+    }
+  }
+
+  const copied = await copyText(payload.url);
+  updateStatus(
+    shareStatus,
+    copied
+      ? `Share link copied for ${photo.title || "photo"}.`
+      : "Could not copy this photo link automatically."
+  );
+}
+
 function initShareOptions() {
   shareButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -521,7 +566,9 @@ function renderGallery(photos, filter) {
   galleryGrid.innerHTML = "";
   filtered.forEach((photo, index) => {
     const card = document.createElement("article");
+    const cardId = `photo-${index + 1}`;
     card.className = "photo-card";
+    card.id = cardId;
     card.style.animationDelay = `${index * 60}ms`;
 
     if (lookbookMode) {
@@ -542,7 +589,18 @@ function renderGallery(photos, filter) {
       </button>
     `;
 
+    const shareButton = document.createElement("button");
+    shareButton.type = "button";
+    shareButton.className = "photo-share-btn";
+    shareButton.textContent = "Share";
+    shareButton.setAttribute("aria-label", `Share ${photo.title || "photo"}`);
+    shareButton.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      await sharePhoto(photo, cardId);
+    });
+
     card.querySelector("button").addEventListener("click", () => openLightbox(photo));
+    card.appendChild(shareButton);
     galleryGrid.appendChild(card);
   });
 }

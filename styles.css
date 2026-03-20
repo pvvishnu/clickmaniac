@@ -540,6 +540,7 @@ body[data-theme="sunset-pop"] .filter-btn.active {
 
 .photo-card {
   --card-tilt: 0deg;
+  position: relative;
   break-inside: avoid;
   margin: 0 0 1rem;
   border: 1px solid var(--line);
@@ -607,6 +608,31 @@ body[data-theme="sunset-pop"] .filter-btn.active {
   aspect-ratio: 4 / 5;
   object-fit: cover;
   filter: saturate(1.08) contrast(1.04);
+}
+
+.photo-share-btn {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(10, 10, 12, 0.55);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.32rem 0.65rem;
+  font: inherit;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 2;
+}
+
+body[data-theme="mono-noir"] .photo-share-btn {
+  background: rgba(4, 6, 9, 0.8);
+}
+
+body[data-theme="sunset-pop"] .photo-share-btn {
+  background: rgba(52, 20, 42, 0.75);
 }
 
 .card-meta {
@@ -768,8 +794,14 @@ body[data-theme="sunset-pop"] .lightbox {
   }
 
   .share-btn,
-  .comment-submit {
+  .comment-submit,
+  .photo-share-btn {
     width: 100%;
+  }
+
+  .photo-share-btn {
+    position: static;
+    margin: 0.35rem 0.7rem 0.6rem;
   }
 
   .hero {
