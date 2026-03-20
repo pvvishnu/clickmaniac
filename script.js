@@ -8,6 +8,7 @@ const lightbox = document.getElementById("lightbox");
 const lightboxImage = document.getElementById("lightboxImage");
 const lightboxTitle = document.getElementById("lightboxTitle");
 const lightboxMeta = document.getElementById("lightboxMeta");
+const lightboxWatermark = document.getElementById("lightboxWatermark");
 const lightboxShareBtn = document.getElementById("lightboxShareBtn");
 const closeLightbox = document.getElementById("closeLightbox");
 const layoutToggle = document.getElementById("layoutToggle");
@@ -27,6 +28,7 @@ const localCommentsFallback = document.getElementById("localCommentsFallback");
 const defaultTheme = "studio";
 const layoutStorageKey = "portfolio-lookbook";
 const commentsStorageKey = "portfolio-comments-v1";
+const defaultWatermark = "@click_maniac";
 
 const giscusConfig = {
   repo: "pvvishnu/clickmaniac",
@@ -608,6 +610,7 @@ function renderGallery(photos, filter) {
     card.innerHTML = `
       <button aria-label="Open ${photo.title}">
         <img src="${photo.src}" alt="${photo.alt || photo.title}" loading="lazy" decoding="async" />
+        <span class="photo-watermark">${photo.watermark || defaultWatermark}</span>
         <div class="card-meta">
           <p class="card-title">${photo.title || "Untitled"}</p>
           <p class="card-tag">${photo.category || "Uncategorized"}</p>
@@ -635,6 +638,9 @@ function openLightbox(photo, cardId) {
   lightboxImage.src = photo.src;
   lightboxImage.alt = photo.alt || photo.title || "Portfolio photo";
   lightboxTitle.textContent = photo.title || "Untitled";
+  if (lightboxWatermark) {
+    lightboxWatermark.textContent = photo.watermark || defaultWatermark;
+  }
   activeLightboxPhoto = photo;
   activeLightboxCardId = cardId || "";
 
