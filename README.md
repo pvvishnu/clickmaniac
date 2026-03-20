@@ -37,22 +37,31 @@ Then open `http://localhost:8080`.
 npx serve .
 ```
 
-## Deploy with custom domain (recommended: Cloudflare Pages)
+## Deploy with custom domain (recommended: Netlify)
 
 1. Push this project to a GitHub repository.
-2. Create a Cloudflare account and add your domain to Cloudflare DNS.
-3. In Cloudflare Pages, click **Create a project** and connect your GitHub repo.
+2. Sign in to Netlify and select **Add new site** > **Import an existing project**.
+3. Connect your GitHub repo.
 4. Build settings:
-   - Framework preset: `None`
-   - Build command: *(leave empty)*
-   - Build output directory: `/`
+  - Base directory: *(leave empty)*
+  - Build command: *(leave empty)*
+  - Publish directory: `/`
 5. Deploy.
-6. In Pages project settings, open **Custom domains** and add your domain.
-7. Follow Cloudflare DNS prompts to point your domain to Pages.
+
+### Connect clickmaniac.com to Netlify
+
+1. In Netlify site settings, open **Domain management** and add `clickmaniac.com`.
+2. Also add `www.clickmaniac.com` as a domain alias.
+3. In your DNS provider for clickmaniac.com, create/update records:
+  - `A` record for host `@` pointing to `75.2.60.5`
+  - `A` record for host `@` pointing to `99.83.190.102`
+  - `CNAME` record for host `www` pointing to your Netlify subdomain (example: `your-site-name.netlify.app`)
+4. Back in Netlify, verify DNS and enable HTTPS certificate provisioning.
+5. Set your primary domain to either `clickmaniac.com` or `www.clickmaniac.com` (your choice).
 
 ## Alternative hosts
 
-- Netlify (also free with custom domains)
+- Cloudflare Pages
 - GitHub Pages + your DNS provider
 
 ## Files
