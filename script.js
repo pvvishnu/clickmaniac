@@ -62,18 +62,14 @@ let activeLightboxPhoto = null;
 let activeLightboxCardId = "";
 let infiniteCanvasReady = false;
 let orbitalAnimationFrame = 0;
+const defaultHeroFeatureSummary = heroFeatureSummary ? heroFeatureSummary.textContent : "";
 
 function withLeadingSlash(path) {
   return String(path || "").replace(/^\/+/, "");
 }
 
 function buildPhotoDescription(photo) {
-  const categoryText = (photo.category || "Personal").toLowerCase();
-  const locationText = photo.location && photo.location !== "Unknown"
-    ? ` around ${photo.location}`
-    : " from a quieter in-between moment";
-
-  return photo.description || `A ${categoryText} frame captured${locationText}, kept for its atmosphere, texture, and timing.`;
+  return String(photo.description || "").trim();
 }
 
 function buildImageCandidates(photo) {
@@ -146,7 +142,7 @@ function updateHeroFeature(photos) {
   });
 
   heroFeatureLabel.textContent = activeFilter === "All" ? "Featured Frame" : `${activeFilter} Highlight`;
-  heroFeatureSummary.textContent = buildPhotoDescription(featuredPhoto);
+  heroFeatureSummary.textContent = buildPhotoDescription(featuredPhoto) || defaultHeroFeatureSummary;
   heroFeatureDetails.textContent = metaParts.join(" • ");
 
   if (heroFeatureWatermark) {
@@ -756,7 +752,9 @@ function openLightbox(photo, cardId) {
 
   const metaParts = [photo.category, photo.location, photo.year].filter(Boolean);
   lightboxMeta.textContent = metaParts.join(" • ");
-  lightboxDescription.textContent = buildPhotoDescription(photo);
+  const description = buildPhotoDescription(photo);
+  lightboxDescription.textContent = description;
+  lightboxDescription.hidden = !description;
   lightboxCategory.textContent = photo.category || "Uncategorized";
   lightboxLocation.textContent = photo.location || "Unknown";
   lightboxYear.textContent = photo.year || "Unknown";
