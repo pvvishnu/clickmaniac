@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img" aria-label="Sample street placeholder">
-  <rect width="900" height="1200" fill="#d2ddd9" />
-  <polygon points="80,1200 420,0 500,0 200,1200" fill="#9aa9a3" />
-  <polygon points="320,1200 640,0 760,0 520,1200" fill="#71857f" />
-  <path d="M300 1200L450 0L480 0L360 1200Z" fill="#f1eee9" opacity="0.7" />
-</svg>

@@ -39,30 +39,6 @@
       "year": "2026",
       "src": "assets/images/valles01.jpg",
       "alt": "Valles 01 photograph"
-    },
-    {
-      "title": "Golden Hour Portrait",
-      "category": "Portrait",
-      "location": "Studio",
-      "year": "2025",
-      "src": "assets/images/sample-portrait.svg",
-      "alt": "Portrait sample in warm tones"
-    },
-    {
-      "title": "Dune Light",
-      "category": "Landscape",
-      "location": "Desert",
-      "year": "2024",
-      "src": "assets/images/sample-landscape.svg",
-      "alt": "Landscape sample with horizon lines"
-    },
-    {
-      "title": "Quiet Street",
-      "category": "Street",
-      "location": "Old Town",
-      "year": "2025",
-      "src": "assets/images/sample-street.svg",
-      "alt": "Street sample with architectural perspective"
     }
   ]
 }
