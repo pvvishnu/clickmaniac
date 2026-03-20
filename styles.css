@@ -1229,6 +1229,22 @@ body[data-theme="studio"] .comments-panel {
   background: rgba(255, 255, 255, 0.02);
 }
 
+body[data-theme="studio"] .about p,
+body[data-theme="studio"] .contact p {
+  color: #c8d1de;
+}
+
+body[data-theme="studio"] .contact a {
+  color: #f5f8ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(127, 182, 255, 0.45);
+}
+
+body[data-theme="studio"] .contact a:hover {
+  color: #9cc7ff;
+  border-bottom-color: #9cc7ff;
+}
+
 body[data-theme="studio"] .lightbox {
   background: #06080b;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1349,11 +1365,6 @@ body[data-theme="studio"] .gallery-grid .photo-card {
   overflow: hidden;
 }
 
-body[data-theme="studio"] .gallery-grid .photo-card:nth-child(7n + 1),
-body[data-theme="studio"] .gallery-grid .photo-card:nth-child(7n + 5) {
-  grid-row: span 2;
-}
-
 body[data-theme="studio"] .gallery-grid .photo-card button {
   display: block;
 }
@@ -1405,8 +1416,4 @@ body[data-theme="studio"] .gallery-viewport:fullscreen .gallery-grid {
     gap: 0.8rem;
   }
 
-  body[data-theme="studio"] .gallery-grid .photo-card:nth-child(7n + 1),
-  body[data-theme="studio"] .gallery-grid .photo-card:nth-child(7n + 5) {
-    grid-row: auto;
-  }
 }
