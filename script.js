@@ -3,11 +3,21 @@ const filtersWrap = document.getElementById("filters");
 const galleryViewport = document.getElementById("galleryViewport");
 const resetCanvasBtn = document.getElementById("resetCanvasBtn");
 const fullscreenCanvasBtn = document.getElementById("fullscreenCanvasBtn");
+const heroFeatureImage = document.getElementById("heroFeatureImage");
+const heroFeatureWatermark = document.getElementById("heroFeatureWatermark");
+const heroFeatureTitle = document.getElementById("heroFeatureTitle");
+const heroFeatureLabel = document.getElementById("heroFeatureLabel");
+const heroFeatureSummary = document.getElementById("heroFeatureSummary");
+const heroFeatureDetails = document.getElementById("heroFeatureDetails");
 
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = document.getElementById("lightboxImage");
 const lightboxTitle = document.getElementById("lightboxTitle");
 const lightboxMeta = document.getElementById("lightboxMeta");
+const lightboxDescription = document.getElementById("lightboxDescription");
+const lightboxCategory = document.getElementById("lightboxCategory");
+const lightboxLocation = document.getElementById("lightboxLocation");
+const lightboxYear = document.getElementById("lightboxYear");
 const lightboxWatermark = document.getElementById("lightboxWatermark");
 const lightboxShareBtn = document.getElementById("lightboxShareBtn");
 const closeLightbox = document.getElementById("closeLightbox");
@@ -53,6 +63,98 @@ let activeLightboxPhoto = null;
 let activeLightboxCardId = "";
 let infiniteCanvasReady = false;
 let orbitalAnimationFrame = 0;
+
+function withLeadingSlash(path) {
+  return String(path || "").replace(/^\/+/, "");
+}
+
+function buildPhotoDescription(photo) {
+  const categoryText = (photo.category || "Personal").toLowerCase();
+  const locationText = photo.location && photo.location !== "Unknown"
+    ? ` around ${photo.location}`
+    : " from a quieter in-between moment";
+
+  return photo.description || `A ${categoryText} frame captured${locationText}, kept for its atmosphere, texture, and timing.`;
+}
+
+function buildImageCandidates(photo) {
+  const fullSrc = withLeadingSlash(photo.src);
+  const extIndex = fullSrc.lastIndexOf(".");
+  if (extIndex <= 0) {
+    return { src: fullSrc, thumb: fullSrc, srcset: "" };
+  }
+
+  const base = fullSrc.slice(0, extIndex);
+  const extension = fullSrc.slice(extIndex);
+  const thumb = `${base}-thumb${extension}`;
+  const small = `${base}-960${extension}`;
+
+  return {
+    src: fullSrc,
+    thumb,
+    srcset: `${thumb} 480w, ${small} 960w, ${fullSrc} 1600w`
+  };
+}
+
+function enhanceImageElement(image, photo, options = {}) {
+  if (!image) {
+    return;
+  }
+
+  const { eager = false, sizes = "100vw", allowThumbFallback = true } = options;
+  const candidates = buildImageCandidates(photo);
+  const fallbackSrc = allowThumbFallback ? candidates.thumb : candidates.src;
+
+  image.alt = photo.alt || photo.title || "Portfolio photo";
+  image.loading = eager ? "eager" : "lazy";
+  image.decoding = "async";
+  image.fetchPriority = eager ? "high" : "low";
+  image.setAttribute("sizes", sizes);
+  image.dataset.full = candidates.src;
+  image.dataset.fallbackTried = "0";
+
+  if (allowThumbFallback) {
+    image.setAttribute("srcset", candidates.srcset);
+    image.src = fallbackSrc;
+  } else {
+    image.removeAttribute("srcset");
+    image.src = candidates.src;
+  }
+
+  image.onerror = () => {
+    if (image.dataset.fallbackTried === "0") {
+      image.dataset.fallbackTried = "1";
+      image.removeAttribute("srcset");
+      image.src = candidates.src;
+      return;
+    }
+
+    image.onerror = null;
+  };
+}
+
+function updateHeroFeature(photos) {
+  if (!heroFeatureImage || photos.length === 0) {
+    return;
+  }
+
+  const featuredPhoto = photos.find((photo) => photo.featured) || photos[0];
+  const metaParts = [featuredPhoto.category, featuredPhoto.location, featuredPhoto.year].filter(Boolean);
+
+  enhanceImageElement(heroFeatureImage, featuredPhoto, {
+    eager: true,
+    sizes: "(max-width: 740px) 100vw, 58vw"
+  });
+
+  heroFeatureTitle.textContent = featuredPhoto.title || "Selected Work";
+  heroFeatureLabel.textContent = activeFilter === "All" ? "Featured Frame" : `${activeFilter} Highlight`;
+  heroFeatureSummary.textContent = buildPhotoDescription(featuredPhoto);
+  heroFeatureDetails.textContent = metaParts.join(" • ");
+
+  if (heroFeatureWatermark) {
+    heroFeatureWatermark.textContent = featuredPhoto.watermark || defaultWatermark;
+  }
+}
 
 const watchGridConfig = {
   width: 3600,
@@ -601,6 +703,7 @@ function renderGallery(photos, filter) {
 
   galleryGrid.innerHTML = "";
   galleryGrid.classList.remove("lookbook-mode", "infinite-canvas", "watch-grid");
+  updateHeroFeature(filtered);
   filtered.forEach((photo, index) => {
     const card = document.createElement("article");
     const cardId = `photo-${index + 1}`;
@@ -609,7 +712,7 @@ function renderGallery(photos, filter) {
 
     card.innerHTML = `
       <button aria-label="Open ${photo.title}">
-        <img src="${photo.src}" alt="${photo.alt || photo.title}" loading="lazy" decoding="async" />
+        <img alt="${photo.alt || photo.title}" />
         <span class="photo-watermark">${photo.watermark || defaultWatermark}</span>
         <div class="card-meta">
           <p class="card-title">${photo.title || "Untitled"}</p>
@@ -628,6 +731,11 @@ function renderGallery(photos, filter) {
       await sharePhoto(photo, cardId);
     });
 
+    const image = card.querySelector("img");
+    enhanceImageElement(image, photo, {
+      sizes: "(max-width: 740px) 50vw, (max-width: 1100px) 33vw, 25vw"
+    });
+
     card.querySelector("button").addEventListener("click", () => openLightbox(photo, cardId));
     card.appendChild(shareButton);
     galleryGrid.appendChild(card);
@@ -635,8 +743,12 @@ function renderGallery(photos, filter) {
 }
 
 function openLightbox(photo, cardId) {
-  lightboxImage.src = photo.src;
-  lightboxImage.alt = photo.alt || photo.title || "Portfolio photo";
+  lightbox.setAttribute("data-state", "opening");
+  enhanceImageElement(lightboxImage, photo, {
+    eager: true,
+    sizes: "100vw",
+    allowThumbFallback: false
+  });
   lightboxTitle.textContent = photo.title || "Untitled";
   if (lightboxWatermark) {
     lightboxWatermark.textContent = photo.watermark || defaultWatermark;
@@ -646,12 +758,20 @@ function openLightbox(photo, cardId) {
 
   const metaParts = [photo.category, photo.location, photo.year].filter(Boolean);
   lightboxMeta.textContent = metaParts.join(" • ");
+  lightboxDescription.textContent = buildPhotoDescription(photo);
+  lightboxCategory.textContent = photo.category || "Uncategorized";
+  lightboxLocation.textContent = photo.location || "Unknown";
+  lightboxYear.textContent = photo.year || "Unknown";
 
   lightbox.showModal();
+  window.requestAnimationFrame(() => {
+    lightbox.setAttribute("data-state", "open");
+  });
 }
 
 function closeModal() {
   if (lightbox.open) {
+    lightbox.setAttribute("data-state", "closing");
     lightbox.close();
   }
 }
@@ -677,6 +797,10 @@ lightbox.addEventListener("click", (event) => {
   if (!insideDialog) {
     closeModal();
   }
+});
+
+lightbox.addEventListener("close", () => {
+  lightbox.removeAttribute("data-state");
 });
 
 document.addEventListener("keydown", (event) => {

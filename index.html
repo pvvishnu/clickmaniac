@@ -30,10 +30,29 @@
 
   <main>
     <section class="hero">
-      <p class="kicker">Frames Between Deadlines</p>
-      <h2>Built in IT. Recharged through light, streets, skies, and the quiet drama of everyday moments.</h2>
-      <p class="hero-copy">Photography is where I slow down, observe more carefully, and turn small slices of free time into something lasting.</p>
-      <a class="cta" href="#gallery">Explore Work</a>
+      <div class="hero-copy-block">
+        <p class="kicker">Frames Between Deadlines</p>
+        <h2>Built in IT. Recharged through light, streets, skies, and the quiet drama of everyday moments.</h2>
+        <p class="hero-copy">Photography is where I slow down, observe more carefully, and turn small slices of free time into something lasting.</p>
+        <div class="hero-notes">
+          <span>Personal archive</span>
+          <span>Street, travel, nature</span>
+          <span>Built for quiet viewing</span>
+        </div>
+        <a class="cta" href="#gallery">Explore Work</a>
+      </div>
+      <article class="hero-feature" aria-live="polite">
+        <div class="hero-feature-media">
+          <img id="heroFeatureImage" alt="Featured portfolio image" />
+          <span id="heroFeatureWatermark" class="hero-feature-watermark">@click_maniac</span>
+        </div>
+        <div class="hero-feature-meta">
+          <p id="heroFeatureLabel" class="hero-feature-label">Featured Frame</p>
+          <h3 id="heroFeatureTitle">Selected Work</h3>
+          <p id="heroFeatureSummary" class="hero-feature-summary">A rotating featured image from the current collection.</p>
+          <p id="heroFeatureDetails" class="hero-feature-details"></p>
+        </div>
+      </article>
     </section>
 
     <section id="gallery" class="gallery-section">
@@ -117,11 +136,32 @@
   <dialog id="lightbox" class="lightbox">
     <button id="lightboxShareBtn" class="lightbox-share-btn" aria-label="Share this photo">Share</button>
     <button id="closeLightbox" class="close-btn" aria-label="Close">×</button>
-    <span id="lightboxWatermark" class="lightbox-watermark">@click_maniac</span>
-    <img id="lightboxImage" alt="Expanded portfolio image" />
+    <div class="lightbox-media">
+      <span id="lightboxWatermark" class="lightbox-watermark">@click_maniac</span>
+      <img id="lightboxImage" alt="Expanded portfolio image" />
+    </div>
     <div class="caption-wrap">
-      <p id="lightboxTitle" class="caption-title"></p>
-      <p id="lightboxMeta" class="caption-meta"></p>
+      <div class="caption-main">
+        <p id="lightboxTitle" class="caption-title"></p>
+        <p id="lightboxMeta" class="caption-meta"></p>
+      </div>
+      <div class="caption-side">
+        <p id="lightboxDescription" class="caption-description"></p>
+        <dl class="caption-facts">
+          <div>
+            <dt>Category</dt>
+            <dd id="lightboxCategory"></dd>
+          </div>
+          <div>
+            <dt>Location</dt>
+            <dd id="lightboxLocation"></dd>
+          </div>
+          <div>
+            <dt>Year</dt>
+            <dd id="lightboxYear"></dd>
+          </div>
+        </dl>
+      </div>
     </div>
   </dialog>
 
