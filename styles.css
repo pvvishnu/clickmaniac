@@ -382,12 +382,6 @@ main {
   font-size: 0.72rem;
 }
 
-.hero-feature h3 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2vw, 1.9rem);
-}
-
 .hero-feature-summary {
   margin: 0;
   color: var(--ink);

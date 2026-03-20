@@ -5,7 +5,6 @@ const resetCanvasBtn = document.getElementById("resetCanvasBtn");
 const fullscreenCanvasBtn = document.getElementById("fullscreenCanvasBtn");
 const heroFeatureImage = document.getElementById("heroFeatureImage");
 const heroFeatureWatermark = document.getElementById("heroFeatureWatermark");
-const heroFeatureTitle = document.getElementById("heroFeatureTitle");
 const heroFeatureLabel = document.getElementById("heroFeatureLabel");
 const heroFeatureSummary = document.getElementById("heroFeatureSummary");
 const heroFeatureDetails = document.getElementById("heroFeatureDetails");
@@ -146,7 +145,6 @@ function updateHeroFeature(photos) {
     sizes: "(max-width: 740px) 100vw, 58vw"
   });
 
-  heroFeatureTitle.textContent = featuredPhoto.title || "Selected Work";
   heroFeatureLabel.textContent = activeFilter === "All" ? "Featured Frame" : `${activeFilter} Highlight`;
   heroFeatureSummary.textContent = buildPhotoDescription(featuredPhoto);
   heroFeatureDetails.textContent = metaParts.join(" • ");
