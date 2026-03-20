@@ -28,13 +28,15 @@ const localCommentsFallback = document.getElementById("localCommentsFallback");
 const themeLabels = {
   "editorial-burn": "Editorial Burn",
   "mono-noir": "Mono Noir",
-  "sunset-pop": "Sunset Pop"
+  "sunset-pop": "Sunset Pop",
+  "contemporary": "Contemporary"
 };
 
 const themeVeilTones = {
   "editorial-burn": ["#f06b2f", "#ffd25f"],
   "mono-noir": ["#f3f3f3", "#8f97a8"],
-  "sunset-pop": ["#ff6d50", "#ffd97a"]
+  "sunset-pop": ["#ff6d50", "#ffd97a"],
+  "contemporary": ["#3b66ff", "#6ef5cb"]
 };
 
 const defaultTheme = "editorial-burn";
@@ -363,11 +365,15 @@ function applyTransitionPreset(presetName) {
 function getThemeByTime() {
   const hour = new Date().getHours();
 
-  if (hour >= 5 && hour < 12) {
+  if (hour >= 5 && hour < 10) {
     return "sunset-pop";
   }
 
-  if (hour >= 12 && hour < 19) {
+  if (hour >= 10 && hour < 16) {
+    return "contemporary";
+  }
+
+  if (hour >= 16 && hour < 20) {
     return "editorial-burn";
   }
 

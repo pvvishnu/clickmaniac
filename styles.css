@@ -100,6 +100,24 @@ body[data-theme="sunset-pop"] {
   --button-ink: #301329;
 }
 
+body[data-theme="contemporary"] {
+  --font-body: "Syne", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --bg: #eff4ff;
+  --bg-layer: radial-gradient(circle at 92% 14%, rgba(128, 170, 255, 0.52) 0, transparent 34%),
+    radial-gradient(circle at 8% 82%, rgba(133, 255, 224, 0.56) 0, transparent 30%),
+    linear-gradient(135deg, #eef2ff 0%, #eaf8f3 55%, #f4fbff 100%);
+  --ink: #132133;
+  --muted: #4d6377;
+  --card: rgba(255, 255, 255, 0.62);
+  --line: rgba(19, 33, 51, 0.2);
+  --accent: #3b66ff;
+  --accent-2: #5de7c2;
+  --surface: rgba(255, 255, 255, 0.62);
+  --shadow: 0 20px 54px rgba(39, 72, 119, 0.18);
+  --button-ink: #051629;
+}
+
 .ambient {
   position: fixed;
   z-index: -1;
@@ -525,6 +543,16 @@ body[data-theme="sunset-pop"] .filter-btn.active {
   background: linear-gradient(90deg, #ff6f4e, #ffd47d);
 }
 
+body[data-theme="contemporary"] .filter-btn {
+  border-radius: 10px;
+  border-color: rgba(19, 33, 51, 0.24);
+}
+
+body[data-theme="contemporary"] .filter-btn.active {
+  background: linear-gradient(90deg, #5f7dff, #67eccc);
+  color: #041221;
+}
+
 .gallery-grid {
   columns: 3 250px;
   column-gap: 1rem;
@@ -635,6 +663,12 @@ body[data-theme="sunset-pop"] .photo-share-btn {
   background: rgba(52, 20, 42, 0.75);
 }
 
+body[data-theme="contemporary"] .photo-share-btn {
+  border-color: rgba(19, 33, 51, 0.26);
+  background: rgba(255, 255, 255, 0.84);
+  color: #102136;
+}
+
 .card-meta {
   padding: 0.7rem 0.85rem 0.9rem;
 }
@@ -642,6 +676,11 @@ body[data-theme="sunset-pop"] .photo-share-btn {
 .card-title {
   margin: 0;
   font-weight: 700;
+}
+
+.card-title,
+.caption-title {
+  display: none;
 }
 
 .card-tag {
@@ -672,6 +711,16 @@ body[data-theme="mono-noir"] .lightbox {
 
 body[data-theme="sunset-pop"] .lightbox {
   background: linear-gradient(145deg, #2c1730, #5a2448);
+}
+
+body[data-theme="contemporary"] .lightbox {
+  background: linear-gradient(145deg, #f7fbff, #e7f0ff);
+  color: #102137;
+  border: 1px solid rgba(19, 33, 51, 0.16);
+}
+
+body[data-theme="contemporary"] .caption-meta {
+  color: #4b6172;
 }
 
 .lightbox::backdrop {
