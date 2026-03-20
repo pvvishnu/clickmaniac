@@ -7,12 +7,8 @@ const lightboxTitle = document.getElementById("lightboxTitle");
 const lightboxMeta = document.getElementById("lightboxMeta");
 const lightboxShareBtn = document.getElementById("lightboxShareBtn");
 const closeLightbox = document.getElementById("closeLightbox");
-const themePicker = document.getElementById("themePicker");
-const themeLine = document.getElementById("themeLine");
-const autoThemeToggle = document.getElementById("autoTheme");
 const layoutToggle = document.getElementById("layoutToggle");
 const themeVeil = document.getElementById("themeVeil");
-const transitionPreset = document.getElementById("transitionPreset");
 const shareButtons = document.querySelectorAll("[data-share-platform]");
 const nativeShareBtn = document.getElementById("nativeShareBtn");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
@@ -25,26 +21,9 @@ const commentStatus = document.getElementById("commentStatus");
 const giscusThread = document.getElementById("giscusThread");
 const localCommentsFallback = document.getElementById("localCommentsFallback");
 
-const themeLabels = {
-  "editorial-burn": "Editorial Burn",
-  "mono-noir": "Mono Noir",
-  "sunset-pop": "Sunset Pop",
-  "contemporary": "Contemporary"
-};
-
-const themeVeilTones = {
-  "editorial-burn": ["#f06b2f", "#ffd25f"],
-  "mono-noir": ["#f3f3f3", "#8f97a8"],
-  "sunset-pop": ["#ff6d50", "#ffd97a"],
-  "contemporary": ["#3b66ff", "#6ef5cb"]
-};
-
-const defaultTheme = "editorial-burn";
-const autoThemeStorageKey = "portfolio-auto-theme";
+const defaultTheme = "studio";
 const layoutStorageKey = "portfolio-lookbook";
-const transitionPresetStorageKey = "portfolio-transition-preset";
 const commentsStorageKey = "portfolio-comments-v1";
-const defaultTransitionPreset = "cinema";
 
 const giscusConfig = {
   repo: "pvvishnu/clickmaniac",
@@ -56,7 +35,7 @@ const giscusConfig = {
   reactionsEnabled: "1",
   emitMetadata: "0",
   inputPosition: "bottom",
-  theme: "light",
+  theme: "dark_dimmed",
   lang: "en"
 };
 
@@ -340,57 +319,16 @@ function initComments() {
 }
 
 function getTransitionDuration() {
-  const preset = document.body.dataset.veilStyle || defaultTransitionPreset;
-  return preset === "minimal" ? 540 : 1120;
+  return 720;
 }
 
 function getTransitionSwapDelay() {
-  const preset = document.body.dataset.veilStyle || defaultTransitionPreset;
-  return preset === "minimal" ? 110 : 190;
-}
-
-function applyTransitionPreset(presetName) {
-  const resolvedPreset = presetName === "minimal" || presetName === "cinema"
-    ? presetName
-    : defaultTransitionPreset;
-
-  document.body.dataset.veilStyle = resolvedPreset;
-  localStorage.setItem(transitionPresetStorageKey, resolvedPreset);
-
-  if (transitionPreset) {
-    transitionPreset.value = resolvedPreset;
-  }
-}
-
-function getThemeByTime() {
-  const hour = new Date().getHours();
-
-  if (hour >= 5 && hour < 10) {
-    return "sunset-pop";
-  }
-
-  if (hour >= 10 && hour < 16) {
-    return "contemporary";
-  }
-
-  if (hour >= 16 && hour < 20) {
-    return "editorial-burn";
-  }
-
-  return "mono-noir";
+  return 140;
 }
 
 function applyTheme(themeName) {
-  const selectedTheme = themeLabels[themeName] ? themeName : defaultTheme;
+  const selectedTheme = themeName || defaultTheme;
   document.body.dataset.theme = selectedTheme;
-
-  if (themePicker) {
-    themePicker.value = selectedTheme;
-  }
-
-  if (themeLine) {
-    themeLine.textContent = `Current mood: ${themeLabels[selectedTheme]}`;
-  }
 
   localStorage.setItem("portfolio-theme", selectedTheme);
 }
@@ -400,9 +338,8 @@ function setVeilTone(themeName) {
     return;
   }
 
-  const tones = themeVeilTones[themeName] || themeVeilTones[defaultTheme];
-  themeVeil.style.setProperty("--veil-a", tones[0]);
-  themeVeil.style.setProperty("--veil-b", tones[1]);
+  themeVeil.style.setProperty("--veil-a", "#3b66ff");
+  themeVeil.style.setProperty("--veil-b", "#61efca");
 }
 
 function transitionTheme(themeName) {
@@ -437,9 +374,9 @@ function stopAutoThemeClock() {
 
 function startAutoThemeClock() {
   stopAutoThemeClock();
-  transitionTheme(getThemeByTime());
+  transitionTheme(defaultTheme);
   autoThemeInterval = window.setInterval(() => {
-    transitionTheme(getThemeByTime());
+    transitionTheme(defaultTheme);
   }, 300000);
 }
 
@@ -456,58 +393,10 @@ function applyLookbookMode(isEnabled) {
 }
 
 function initTheme() {
-  const savedTheme = localStorage.getItem("portfolio-theme") || defaultTheme;
-  const autoThemeEnabled = localStorage.getItem(autoThemeStorageKey) === "on";
-  const savedTransitionPreset = localStorage.getItem(transitionPresetStorageKey) || defaultTransitionPreset;
+  applyTheme(defaultTheme);
+  setVeilTone(defaultTheme);
 
-  applyTransitionPreset(savedTransitionPreset);
-
-  if (autoThemeToggle) {
-    autoThemeToggle.checked = autoThemeEnabled;
-  }
-
-  if (autoThemeEnabled) {
-    startAutoThemeClock();
-  } else {
-    applyTheme(savedTheme);
-    setVeilTone(savedTheme);
-  }
-
-  if (themePicker) {
-    themePicker.addEventListener("change", (event) => {
-      if (autoThemeToggle && autoThemeToggle.checked) {
-        autoThemeToggle.checked = false;
-        localStorage.setItem(autoThemeStorageKey, "off");
-        stopAutoThemeClock();
-      }
-
-      transitionTheme(event.target.value);
-    });
-  }
-
-  if (autoThemeToggle) {
-    autoThemeToggle.addEventListener("change", (event) => {
-      const enabled = event.target.checked;
-      localStorage.setItem(autoThemeStorageKey, enabled ? "on" : "off");
-
-      if (enabled) {
-        startAutoThemeClock();
-        return;
-      }
-
-      stopAutoThemeClock();
-      transitionTheme(themePicker ? themePicker.value : savedTheme);
-    });
-  }
-
-  if (transitionPreset) {
-    transitionPreset.addEventListener("change", (event) => {
-      applyTransitionPreset(event.target.value);
-    });
-  }
-
-  const savedLayout = localStorage.getItem(layoutStorageKey) === "on";
-  applyLookbookMode(savedLayout);
+  applyLookbookMode(false);
 
   if (layoutToggle) {
     layoutToggle.addEventListener("click", () => {
