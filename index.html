@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name | Photography</title>
+  <meta name="description" content="Photography portfolio by Your Name." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-1"></div>
+  <div class="ambient ambient-2"></div>
+
+  <header class="site-header">
+    <div class="brand">
+      <p class="eyebrow">Photography Portfolio</p>
+      <h1>Your Name</h1>
+    </div>
+    <nav>
+      <a href="#gallery">Gallery</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="kicker">Visual stories in still frames</p>
+      <h2>Portraits, landscapes, and moments that feel alive.</h2>
+      <p class="hero-copy">
+        This site is powered by images in your repository. Upload files to <strong>assets/images</strong>
+        and add entries in <strong>data/photos.json</strong>.
+      </p>
+      <a class="cta" href="#gallery">Explore Work</a>
+    </section>
+
+    <section id="gallery" class="gallery-section">
+      <div class="section-head">
+        <h3>Selected Work</h3>
+        <div id="filters" class="filters"></div>
+      </div>
+      <div id="galleryGrid" class="gallery-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="about" class="about">
+      <h3>About</h3>
+      <p>
+        Replace this with your artist statement. Share your style, process, and what makes your perspective unique.
+      </p>
+    </section>
+
+    <section id="contact" class="contact">
+      <h3>Contact</h3>
+      <p>
+        Email: <a href="mailto:hello@example.com">hello@example.com</a>
+      </p>
+      <p>
+        Instagram: <a href="https://instagram.com" target="_blank" rel="noreferrer">@yourhandle</a>
+      </p>
+    </section>
+  </main>
+
+  <dialog id="lightbox" class="lightbox">
+    <button id="closeLightbox" class="close-btn" aria-label="Close">×</button>
+    <img id="lightboxImage" alt="Expanded portfolio image" />
+    <div class="caption-wrap">
+      <p id="lightboxTitle" class="caption-title"></p>
+      <p id="lightboxMeta" class="caption-meta"></p>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

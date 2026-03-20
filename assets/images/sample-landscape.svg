@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Sample landscape placeholder">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8bcfc7" />
+      <stop offset="100%" stop-color="#d8efe4" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)" />
+  <path d="M0 700L300 520L550 690L900 460L1200 640L1600 490V1000H0Z" fill="#d39c63" />
+  <path d="M0 780L320 670L610 740L980 620L1600 700V1000H0Z" fill="#9f6f45" opacity="0.8" />
+</svg>
