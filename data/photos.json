@@ -1,6 +1,46 @@
 {
   "photos": [
     {
+      "title": "Balloon 01",
+      "category": "Travel",
+      "location": "Unknown",
+      "year": "2026",
+      "src": "assets/images/Balloon01.jpg",
+      "alt": "Balloon 01 photograph"
+    },
+    {
+      "title": "Car 01",
+      "category": "Automotive",
+      "location": "Unknown",
+      "year": "2026",
+      "src": "assets/images/Car01.jpg",
+      "alt": "Car 01 photograph"
+    },
+    {
+      "title": "Falls 01",
+      "category": "Nature",
+      "location": "Unknown",
+      "year": "2026",
+      "src": "assets/images/Falls01.jpg",
+      "alt": "Falls 01 photograph"
+    },
+    {
+      "title": "Falls 02",
+      "category": "Nature",
+      "location": "Unknown",
+      "year": "2026",
+      "src": "assets/images/Falls02.jpg",
+      "alt": "Falls 02 photograph"
+    },
+    {
+      "title": "Valles 01",
+      "category": "Landscape",
+      "location": "Unknown",
+      "year": "2026",
+      "src": "assets/images/valles01.jpg",
+      "alt": "Valles 01 photograph"
+    },
+    {
       "title": "Golden Hour Portrait",
       "category": "Portrait",
       "location": "Studio",
