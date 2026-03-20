@@ -4,7 +4,6 @@
       "title": "Balloon 01",
       "category": "Travel",
       "location": "Not tagged",
-      "description": "A bright travel moment where the balloon adds a playful contrast to the open sky.",
       "year": "2026",
       "src": "assets/images/Balloon01.jpg",
       "alt": "Balloon 01 photograph"
@@ -13,7 +12,6 @@
       "title": "Car 01",
       "category": "Automotive",
       "location": "Not tagged",
-      "description": "An automotive frame focused on clean lines, reflections, and the character of motion.",
       "year": "2026",
       "src": "assets/images/Car01.jpg",
       "alt": "Car 01 photograph"
@@ -22,7 +20,6 @@
       "title": "Falls 01",
       "category": "Nature",
       "location": "Not tagged",
-      "description": "A nature study of rushing water, layered texture, and cool tonal depth.",
       "year": "2026",
       "src": "assets/images/Falls01.jpg",
       "alt": "Falls 01 photograph"
@@ -31,7 +28,6 @@
       "title": "Falls 02",
       "category": "Nature",
       "location": "Not tagged",
-      "description": "A second waterfall perspective capturing softer flow and a calmer rhythm.",
       "year": "2026",
       "src": "assets/images/Falls02.jpg",
       "alt": "Falls 02 photograph"
@@ -40,7 +36,6 @@
       "title": "Valles 01",
       "category": "Landscape",
       "location": "Not tagged",
-      "description": "A landscape frame shaped by distance, atmosphere, and quiet gradients of light.",
       "year": "2026",
       "src": "assets/images/valles01.jpg",
       "alt": "Valles 01 photograph"
@@ -49,7 +44,6 @@
       "title": "Studio Frame 01",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern composition balancing negative space with a sharp central subject.",
       "year": "2026",
       "src": "assets/images/20b555880561162bde6deb4425e57124.jpg",
       "alt": "Studio Frame 01 photograph"
@@ -58,7 +52,6 @@
       "title": "Studio Frame 02",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "An urban-modern scene with strong edges, subtle shadows, and visual depth.",
       "year": "2026",
       "src": "assets/images/2458837283680ec4bfab652807a4a54c.jpg",
       "alt": "Studio Frame 02 photograph"
@@ -67,7 +60,6 @@
       "title": "Studio Frame 03",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A clean frame where geometry and texture work together in a minimal style.",
       "year": "2026",
       "src": "assets/images/3396fc2f0e11b0f8e0fbed2c4f69ce43.jpg",
       "alt": "Studio Frame 03 photograph"
@@ -76,7 +68,6 @@
       "title": "Studio Frame 04",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A layered composition emphasizing contrast between light highlights and dark structure.",
       "year": "2026",
       "src": "assets/images/38a382cafe3113265645357bde134f83.jpg",
       "alt": "Studio Frame 04 photograph"
@@ -85,7 +76,6 @@
       "title": "Studio Frame 05",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern portrait of place with balanced framing and a cinematic color mood.",
       "year": "2026",
       "src": "assets/images/4e8449b40ed1774d8033fc5ca0b55dec.jpg",
       "alt": "Studio Frame 05 photograph"
@@ -94,7 +84,6 @@
       "title": "Studio Frame 06",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A detail-rich frame capturing the rhythm of surfaces and urban materials.",
       "year": "2026",
       "src": "assets/images/57d66cb5daaa821868076b08e56e4d25.jpg",
       "alt": "Studio Frame 06 photograph"
@@ -103,7 +92,6 @@
       "title": "Studio Frame 07",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A contemporary visual with directional light guiding the eye across the frame.",
       "year": "2026",
       "src": "assets/images/7c1fbd4983d190b16291e01314e1400a.jpg",
       "alt": "Studio Frame 07 photograph"
@@ -112,7 +100,6 @@
       "title": "Studio Frame 08",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "An expressive scene where layered tones create depth and visual calm.",
       "year": "2026",
       "src": "assets/images/8afac26379c0513b1c88fd8815b6c407.jpg",
       "alt": "Studio Frame 08 photograph"
@@ -121,7 +108,6 @@
       "title": "Studio Frame 09",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern composition centered on symmetry, spacing, and subtle perspective.",
       "year": "2026",
       "src": "assets/images/8da53ff45474c8a4536ac49117489c5f.jpg",
       "alt": "Studio Frame 09 photograph"
@@ -130,7 +116,6 @@
       "title": "Studio Frame 10",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A crisp frame with controlled highlights and an understated cinematic feel.",
       "year": "2026",
       "src": "assets/images/97f03ad8246fd8a038df93ff22ee1e34.jpg",
       "alt": "Studio Frame 10 photograph"
@@ -139,7 +124,6 @@
       "title": "Studio Frame 11",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A quiet urban moment preserved through texture, form, and clean composition.",
       "year": "2026",
       "src": "assets/images/9cf412ba67a7214794540bcfddf74672.jpg",
       "alt": "Studio Frame 11 photograph"
@@ -148,7 +132,6 @@
       "title": "Studio Frame 12",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A balanced frame where shadow and structure shape the visual narrative.",
       "year": "2026",
       "src": "assets/images/a55d3a7feafa1d14a81eb18de78e4db3.jpg",
       "alt": "Studio Frame 12 photograph"
@@ -157,7 +140,6 @@
       "title": "Studio Frame 13",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern still with layered detail and a restrained, editorial tone.",
       "year": "2026",
       "src": "assets/images/a7b856a3ca044e4b6821976d56c5cc28.jpg",
       "alt": "Studio Frame 13 photograph"
@@ -166,7 +148,6 @@
       "title": "Studio Frame 14",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A composed scene that highlights shape, depth, and controlled contrast.",
       "year": "2026",
       "src": "assets/images/c0af99bdd7402478a6a74546e82b1bfa.jpg",
       "alt": "Studio Frame 14 photograph"
@@ -175,7 +156,6 @@
       "title": "Studio Frame 15",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A clean visual narrative built from lines, reflections, and tonal balance.",
       "year": "2026",
       "src": "assets/images/c39aa0a3de6f3e67d817a34d639e3a60.jpg",
       "alt": "Studio Frame 15 photograph"
@@ -184,7 +164,6 @@
       "title": "Studio Frame 16",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern frame with subtle movement and careful control of perspective.",
       "year": "2026",
       "src": "assets/images/c3e22c3285777d6e4d1554437bb3f8fd.jpg",
       "alt": "Studio Frame 16 photograph"
@@ -193,7 +172,6 @@
       "title": "Studio Frame 17",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A minimal composition where spacing and light create a calm focal point.",
       "year": "2026",
       "src": "assets/images/cbff6a2679371e0f21328c6773de8efc.jpg",
       "alt": "Studio Frame 17 photograph"
@@ -202,7 +180,6 @@
       "title": "Studio Frame 18",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A contemporary scene captured for its texture layers and cinematic contrast.",
       "year": "2026",
       "src": "assets/images/dcb0a565ae87353fff7225195e0fc2c6.jpg",
       "alt": "Studio Frame 18 photograph"
@@ -211,7 +188,6 @@
       "title": "Studio Frame 19",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A modern visual study of structure, depth, and ambient urban light.",
       "year": "2026",
       "src": "assets/images/e21f9a59ec9dcf66919499ede7c9da09.jpg",
       "alt": "Studio Frame 19 photograph"
@@ -220,7 +196,6 @@
       "title": "Studio Frame 20",
       "category": "Modern",
       "location": "Not tagged",
-      "description": "A final modern frame emphasizing clarity, mood, and polished composition.",
       "year": "2026",
       "src": "assets/images/e5683b3423376f53bd6df7e10bc86c96.jpg",
       "alt": "Studio Frame 20 photograph"
