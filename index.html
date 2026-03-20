@@ -39,9 +39,15 @@
     <section id="gallery" class="gallery-section">
       <div class="section-head">
         <h3>Selected Work</h3>
-        <div id="filters" class="filters"></div>
+        <div class="canvas-toolbar">
+          <p class="canvas-hint">Drag to pan. Scroll to zoom.</p>
+          <button id="resetCanvasBtn" class="canvas-reset-btn" type="button">Reset View</button>
+          <div id="filters" class="filters"></div>
+        </div>
       </div>
-      <div id="galleryGrid" class="gallery-grid" aria-live="polite"></div>
+      <div id="galleryViewport" class="gallery-viewport" aria-label="Infinite gallery canvas">
+        <div id="galleryGrid" class="gallery-grid" aria-live="polite"></div>
+      </div>
     </section>
 
     <section id="community" class="community">

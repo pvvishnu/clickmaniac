@@ -1,5 +1,7 @@
 const galleryGrid = document.getElementById("galleryGrid");
 const filtersWrap = document.getElementById("filters");
+const galleryViewport = document.getElementById("galleryViewport");
+const resetCanvasBtn = document.getElementById("resetCanvasBtn");
 
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = document.getElementById("lightboxImage");
@@ -46,6 +48,161 @@ let lookbookMode = false;
 let viewerComments = [];
 let activeLightboxPhoto = null;
 let activeLightboxCardId = "";
+let infiniteCanvasReady = false;
+
+const canvasConfig = {
+  width: 4200,
+  height: 2600,
+  minScale: 0.45,
+  maxScale: 1.9,
+  edgePadding: 120
+};
+
+const canvasState = {
+  x: 0,
+  y: 0,
+  scale: 0.8,
+  panning: false,
+  startX: 0,
+  startY: 0
+};
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function clampCanvasPosition() {
+  if (!galleryViewport) {
+    return;
+  }
+
+  const scaledWidth = canvasConfig.width * canvasState.scale;
+  const scaledHeight = canvasConfig.height * canvasState.scale;
+  const minX = galleryViewport.clientWidth - scaledWidth - canvasConfig.edgePadding;
+  const maxX = canvasConfig.edgePadding;
+  const minY = galleryViewport.clientHeight - scaledHeight - canvasConfig.edgePadding;
+  const maxY = canvasConfig.edgePadding;
+
+  canvasState.x = clamp(canvasState.x, minX, maxX);
+  canvasState.y = clamp(canvasState.y, minY, maxY);
+}
+
+function applyCanvasTransform() {
+  if (!galleryGrid) {
+    return;
+  }
+
+  galleryGrid.style.transform = `translate3d(${canvasState.x}px, ${canvasState.y}px, 0) scale(${canvasState.scale})`;
+}
+
+function centerInfiniteCanvas() {
+  if (!galleryViewport) {
+    return;
+  }
+
+  canvasState.x = (galleryViewport.clientWidth - (canvasConfig.width * canvasState.scale)) / 2;
+  canvasState.y = (galleryViewport.clientHeight - (canvasConfig.height * canvasState.scale)) / 2;
+  clampCanvasPosition();
+  applyCanvasTransform();
+}
+
+function computeCanvasCardPosition(index) {
+  const columns = 6;
+  const baseX = 220;
+  const baseY = 160;
+  const gapX = 610;
+  const gapY = 430;
+  const col = index % columns;
+  const row = Math.floor(index / columns);
+  const stagger = row % 2 === 0 ? 0 : 120;
+  const jitterX = ((index * 97) % 80) - 40;
+  const jitterY = ((index * 83) % 70) - 35;
+
+  return {
+    x: baseX + (col * gapX) + stagger + jitterX,
+    y: baseY + (row * gapY) + jitterY
+  };
+}
+
+function initInfiniteCanvas() {
+  if (!galleryViewport || !galleryGrid || infiniteCanvasReady) {
+    return;
+  }
+
+  infiniteCanvasReady = true;
+  galleryGrid.classList.add("infinite-canvas");
+  galleryGrid.style.width = `${canvasConfig.width}px`;
+  galleryGrid.style.height = `${canvasConfig.height}px`;
+  centerInfiniteCanvas();
+
+  galleryViewport.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    if (event.target.closest("button, a, input, textarea, label")) {
+      return;
+    }
+
+    canvasState.panning = true;
+    canvasState.startX = event.clientX - canvasState.x;
+    canvasState.startY = event.clientY - canvasState.y;
+    galleryViewport.classList.add("panning");
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (!canvasState.panning) {
+      return;
+    }
+
+    canvasState.x = event.clientX - canvasState.startX;
+    canvasState.y = event.clientY - canvasState.startY;
+    clampCanvasPosition();
+    applyCanvasTransform();
+  });
+
+  window.addEventListener("pointerup", () => {
+    if (!canvasState.panning) {
+      return;
+    }
+
+    canvasState.panning = false;
+    galleryViewport.classList.remove("panning");
+  });
+
+  galleryViewport.addEventListener("wheel", (event) => {
+    event.preventDefault();
+
+    const previousScale = canvasState.scale;
+    const zoomStep = event.deltaY > 0 ? 0.93 : 1.07;
+    const nextScale = clamp(previousScale * zoomStep, canvasConfig.minScale, canvasConfig.maxScale);
+
+    if (nextScale === previousScale) {
+      return;
+    }
+
+    const rect = galleryViewport.getBoundingClientRect();
+    const pointerX = event.clientX - rect.left;
+    const pointerY = event.clientY - rect.top;
+    const worldX = (pointerX - canvasState.x) / previousScale;
+    const worldY = (pointerY - canvasState.y) / previousScale;
+
+    canvasState.scale = nextScale;
+    canvasState.x = pointerX - (worldX * nextScale);
+    canvasState.y = pointerY - (worldY * nextScale);
+    clampCanvasPosition();
+    applyCanvasTransform();
+  }, { passive: false });
+
+  window.addEventListener("resize", () => {
+    clampCanvasPosition();
+    applyCanvasTransform();
+  });
+
+  if (resetCanvasBtn) {
+    resetCanvasBtn.addEventListener("click", centerInfiniteCanvas);
+  }
+}
 
 function hasGiscusConfig() {
   return Boolean(
@@ -343,7 +500,7 @@ function setVeilTone(themeName) {
 }
 
 function transitionTheme(themeName) {
-  const selectedTheme = themeLabels[themeName] ? themeName : defaultTheme;
+  const selectedTheme = themeName || defaultTheme;
   const currentTheme = document.body.dataset.theme || defaultTheme;
 
   if (currentTheme === selectedTheme) {
@@ -395,6 +552,7 @@ function applyLookbookMode(isEnabled) {
 function initTheme() {
   applyTheme(defaultTheme);
   setVeilTone(defaultTheme);
+  initInfiniteCanvas();
 
   applyLookbookMode(false);
 
@@ -462,12 +620,15 @@ function renderGallery(photos, filter) {
   }
 
   galleryGrid.innerHTML = "";
+  galleryGrid.classList.add("infinite-canvas");
   filtered.forEach((photo, index) => {
     const card = document.createElement("article");
     const cardId = `photo-${index + 1}`;
+    const position = computeCanvasCardPosition(index);
     card.className = "photo-card";
     card.id = cardId;
-    card.style.animationDelay = `${index * 60}ms`;
+    card.style.left = `${position.x}px`;
+    card.style.top = `${position.y}px`;
 
     if (lookbookMode) {
       if (index % 7 === 0) {
@@ -501,6 +662,8 @@ function renderGallery(photos, filter) {
     card.appendChild(shareButton);
     galleryGrid.appendChild(card);
   });
+
+  applyCanvasTransform();
 }
 
 function openLightbox(photo, cardId) {
