@@ -2,6 +2,7 @@ const galleryGrid = document.getElementById("galleryGrid");
 const filtersWrap = document.getElementById("filters");
 const galleryViewport = document.getElementById("galleryViewport");
 const resetCanvasBtn = document.getElementById("resetCanvasBtn");
+const fullscreenCanvasBtn = document.getElementById("fullscreenCanvasBtn");
 
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = document.getElementById("lightboxImage");
@@ -49,79 +50,115 @@ let viewerComments = [];
 let activeLightboxPhoto = null;
 let activeLightboxCardId = "";
 let infiniteCanvasReady = false;
+let orbitalAnimationFrame = 0;
 
-const canvasConfig = {
-  width: 4200,
+const watchGridConfig = {
+  width: 3600,
   height: 2600,
-  minScale: 0.45,
-  maxScale: 1.9,
-  edgePadding: 120
+  radiusStepX: 320,
+  radiusStepY: 270,
+  minScale: 0.82,
+  maxScale: 1.45,
+  maxPanX: 560,
+  maxPanY: 460,
+  minTiles: 28,
+  baseTileSize: 220
 };
 
-const canvasState = {
-  x: 0,
-  y: 0,
-  scale: 0.8,
-  panning: false,
-  startX: 0,
-  startY: 0
+const watchGridState = {
+  currentX: 0,
+  currentY: 0,
+  targetX: 0,
+  targetY: 0,
+  currentScale: 0.96,
+  targetScale: 0.96,
+  currentRotation: 0,
+  targetRotation: 0,
+  dragging: false,
+  dragStartX: 0,
+  dragStartY: 0,
+  dragOriginX: 0,
+  dragOriginY: 0
 };
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-function clampCanvasPosition() {
-  if (!galleryViewport) {
-    return;
-  }
-
-  const scaledWidth = canvasConfig.width * canvasState.scale;
-  const scaledHeight = canvasConfig.height * canvasState.scale;
-  const minX = galleryViewport.clientWidth - scaledWidth - canvasConfig.edgePadding;
-  const maxX = canvasConfig.edgePadding;
-  const minY = galleryViewport.clientHeight - scaledHeight - canvasConfig.edgePadding;
-  const maxY = canvasConfig.edgePadding;
-
-  canvasState.x = clamp(canvasState.x, minX, maxX);
-  canvasState.y = clamp(canvasState.y, minY, maxY);
+function lerp(from, to, factor) {
+  return from + ((to - from) * factor);
 }
 
-function applyCanvasTransform() {
+function updateGridTransform() {
   if (!galleryGrid) {
     return;
   }
 
-  galleryGrid.style.transform = `translate3d(${canvasState.x}px, ${canvasState.y}px, 0) scale(${canvasState.scale})`;
+  galleryGrid.style.setProperty("--pan-x", `${watchGridState.currentX}px`);
+  galleryGrid.style.setProperty("--pan-y", `${watchGridState.currentY}px`);
+  galleryGrid.style.setProperty("--grid-scale", String(watchGridState.currentScale));
+  galleryGrid.style.setProperty("--grid-rotation", `${watchGridState.currentRotation}deg`);
 }
 
-function centerInfiniteCanvas() {
-  if (!galleryViewport) {
+function animateGrid() {
+  watchGridState.currentX = lerp(watchGridState.currentX, watchGridState.targetX, 0.12);
+  watchGridState.currentY = lerp(watchGridState.currentY, watchGridState.targetY, 0.12);
+  watchGridState.currentScale = lerp(watchGridState.currentScale, watchGridState.targetScale, 0.1);
+  watchGridState.currentRotation = lerp(watchGridState.currentRotation, watchGridState.targetRotation, 0.1);
+  updateGridTransform();
+  orbitalAnimationFrame = window.requestAnimationFrame(animateGrid);
+}
+
+function resetGridView() {
+  watchGridState.targetX = 0;
+  watchGridState.targetY = 0;
+  watchGridState.targetScale = 0.96;
+  watchGridState.targetRotation = 0;
+}
+
+function computeWatchGridPosition(index) {
+  if (index === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  let remaining = index;
+  let ring = 1;
+
+  while (remaining > (6 * ring)) {
+    remaining -= (6 * ring);
+    ring += 1;
+  }
+
+  const angle = ((Math.PI * 2) * (remaining - 1)) / (6 * ring);
+  const x = Math.cos(angle) * ring * watchGridConfig.radiusStepX;
+  const y = Math.sin(angle) * ring * watchGridConfig.radiusStepY;
+
+  return {
+    x: x + (((index * 37) % 40) - 20),
+    y: y + (((index * 53) % 44) - 22)
+  };
+}
+
+function buildWatchGridTiles(photos) {
+  if (photos.length === 0) {
+    return [];
+  }
+
+  const count = Math.max(photos.length, watchGridConfig.minTiles);
+  return Array.from({ length: count }, (_, index) => photos[index % photos.length]);
+}
+
+async function toggleFullscreenCanvas() {
+  if (!galleryViewport || !document.fullscreenEnabled) {
     return;
   }
 
-  canvasState.x = (galleryViewport.clientWidth - (canvasConfig.width * canvasState.scale)) / 2;
-  canvasState.y = (galleryViewport.clientHeight - (canvasConfig.height * canvasState.scale)) / 2;
-  clampCanvasPosition();
-  applyCanvasTransform();
-}
+  if (document.fullscreenElement) {
+    await document.exitFullscreen();
+    return;
+  }
 
-function computeCanvasCardPosition(index) {
-  const columns = 6;
-  const baseX = 220;
-  const baseY = 160;
-  const gapX = 610;
-  const gapY = 430;
-  const col = index % columns;
-  const row = Math.floor(index / columns);
-  const stagger = row % 2 === 0 ? 0 : 120;
-  const jitterX = ((index * 97) % 80) - 40;
-  const jitterY = ((index * 83) % 70) - 35;
-
-  return {
-    x: baseX + (col * gapX) + stagger + jitterX,
-    y: baseY + (row * gapY) + jitterY
-  };
+  await galleryViewport.requestFullscreen();
 }
 
 function initInfiniteCanvas() {
@@ -130,10 +167,11 @@ function initInfiniteCanvas() {
   }
 
   infiniteCanvasReady = true;
-  galleryGrid.classList.add("infinite-canvas");
-  galleryGrid.style.width = `${canvasConfig.width}px`;
-  galleryGrid.style.height = `${canvasConfig.height}px`;
-  centerInfiniteCanvas();
+  galleryGrid.classList.add("watch-grid");
+  galleryGrid.style.width = `${watchGridConfig.width}px`;
+  galleryGrid.style.height = `${watchGridConfig.height}px`;
+  updateGridTransform();
+  orbitalAnimationFrame = window.requestAnimationFrame(animateGrid);
 
   galleryViewport.addEventListener("pointerdown", (event) => {
     if (event.button !== 0) {
@@ -144,63 +182,76 @@ function initInfiniteCanvas() {
       return;
     }
 
-    canvasState.panning = true;
-    canvasState.startX = event.clientX - canvasState.x;
-    canvasState.startY = event.clientY - canvasState.y;
+    watchGridState.dragging = true;
+    watchGridState.dragStartX = event.clientX;
+    watchGridState.dragStartY = event.clientY;
+    watchGridState.dragOriginX = watchGridState.targetX;
+    watchGridState.dragOriginY = watchGridState.targetY;
     galleryViewport.classList.add("panning");
   });
 
   window.addEventListener("pointermove", (event) => {
-    if (!canvasState.panning) {
-      return;
-    }
-
-    canvasState.x = event.clientX - canvasState.startX;
-    canvasState.y = event.clientY - canvasState.startY;
-    clampCanvasPosition();
-    applyCanvasTransform();
-  });
-
-  window.addEventListener("pointerup", () => {
-    if (!canvasState.panning) {
-      return;
-    }
-
-    canvasState.panning = false;
-    galleryViewport.classList.remove("panning");
-  });
-
-  galleryViewport.addEventListener("wheel", (event) => {
-    event.preventDefault();
-
-    const previousScale = canvasState.scale;
-    const zoomStep = event.deltaY > 0 ? 0.93 : 1.07;
-    const nextScale = clamp(previousScale * zoomStep, canvasConfig.minScale, canvasConfig.maxScale);
-
-    if (nextScale === previousScale) {
+    if (watchGridState.dragging) {
+      const deltaX = event.clientX - watchGridState.dragStartX;
+      const deltaY = event.clientY - watchGridState.dragStartY;
+      watchGridState.targetX = clamp(watchGridState.dragOriginX + deltaX, -watchGridConfig.maxPanX, watchGridConfig.maxPanX);
+      watchGridState.targetY = clamp(watchGridState.dragOriginY + deltaY, -watchGridConfig.maxPanY, watchGridConfig.maxPanY);
+      watchGridState.targetRotation = clamp(watchGridState.targetX / 90, -9, 9);
       return;
     }
 
     const rect = galleryViewport.getBoundingClientRect();
-    const pointerX = event.clientX - rect.left;
-    const pointerY = event.clientY - rect.top;
-    const worldX = (pointerX - canvasState.x) / previousScale;
-    const worldY = (pointerY - canvasState.y) / previousScale;
+    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
 
-    canvasState.scale = nextScale;
-    canvasState.x = pointerX - (worldX * nextScale);
-    canvasState.y = pointerY - (worldY * nextScale);
-    clampCanvasPosition();
-    applyCanvasTransform();
-  }, { passive: false });
-
-  window.addEventListener("resize", () => {
-    clampCanvasPosition();
-    applyCanvasTransform();
+    watchGridState.targetX = clamp(-normalizedX * 180, -watchGridConfig.maxPanX, watchGridConfig.maxPanX);
+    watchGridState.targetY = clamp(-normalizedY * 130, -watchGridConfig.maxPanY, watchGridConfig.maxPanY);
+    watchGridState.targetRotation = clamp(normalizedX * 4.5, -9, 9);
   });
 
+  window.addEventListener("pointerup", () => {
+    if (!watchGridState.dragging) {
+      return;
+    }
+
+    watchGridState.dragging = false;
+    galleryViewport.classList.remove("panning");
+  });
+
+  galleryViewport.addEventListener("mouseleave", () => {
+    if (watchGridState.dragging) {
+      return;
+    }
+
+    watchGridState.targetX = 0;
+    watchGridState.targetY = 0;
+    watchGridState.targetRotation = 0;
+  });
+
+  galleryViewport.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const factor = event.deltaY > 0 ? 0.95 : 1.05;
+    watchGridState.targetScale = clamp(
+      watchGridState.targetScale * factor,
+      watchGridConfig.minScale,
+      watchGridConfig.maxScale
+    );
+  }, { passive: false });
+
   if (resetCanvasBtn) {
-    resetCanvasBtn.addEventListener("click", centerInfiniteCanvas);
+    resetCanvasBtn.addEventListener("click", resetGridView);
+  }
+
+  if (fullscreenCanvasBtn) {
+    if (!document.fullscreenEnabled) {
+      fullscreenCanvasBtn.hidden = true;
+    }
+
+    fullscreenCanvasBtn.addEventListener("click", toggleFullscreenCanvas);
+    document.addEventListener("fullscreenchange", () => {
+      fullscreenCanvasBtn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
+    });
+    fullscreenCanvasBtn.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
   }
 }
 
@@ -553,15 +604,6 @@ function initTheme() {
   applyTheme(defaultTheme);
   setVeilTone(defaultTheme);
   initInfiniteCanvas();
-
-  applyLookbookMode(false);
-
-  if (layoutToggle) {
-    layoutToggle.addEventListener("click", () => {
-      applyLookbookMode(!lookbookMode);
-      renderGallery(allPhotos, activeFilter);
-    });
-  }
 }
 
 async function loadPhotos() {
@@ -620,23 +662,20 @@ function renderGallery(photos, filter) {
   }
 
   galleryGrid.innerHTML = "";
-  galleryGrid.classList.add("infinite-canvas");
-  filtered.forEach((photo, index) => {
+  galleryGrid.classList.remove("lookbook-mode", "infinite-canvas");
+  galleryGrid.classList.add("watch-grid");
+  const gridTiles = buildWatchGridTiles(filtered);
+
+  gridTiles.forEach((photo, index) => {
     const card = document.createElement("article");
-    const cardId = `photo-${index + 1}`;
-    const position = computeCanvasCardPosition(index);
+    const cardId = `photo-tile-${index + 1}`;
+    const position = computeWatchGridPosition(index);
+    const tileSize = watchGridConfig.baseTileSize - Math.min(70, Math.floor(index / 6) * 10);
     card.className = "photo-card";
     card.id = cardId;
     card.style.left = `${position.x}px`;
     card.style.top = `${position.y}px`;
-
-    if (lookbookMode) {
-      if (index % 7 === 0) {
-        card.classList.add("feature-wide");
-      } else if (index % 5 === 0) {
-        card.classList.add("feature-tall");
-      }
-    }
+    card.style.setProperty("--tile-size", `${Math.max(138, tileSize)}px`);
 
     card.innerHTML = `
       <button aria-label="Open ${photo.title}">
@@ -663,7 +702,7 @@ function renderGallery(photos, filter) {
     galleryGrid.appendChild(card);
   });
 
-  applyCanvasTransform();
+  updateGridTransform();
 }
 
 function openLightbox(photo, cardId) {
