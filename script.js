@@ -5,6 +5,7 @@ const lightbox = document.getElementById("lightbox");
 const lightboxImage = document.getElementById("lightboxImage");
 const lightboxTitle = document.getElementById("lightboxTitle");
 const lightboxMeta = document.getElementById("lightboxMeta");
+const lightboxShareBtn = document.getElementById("lightboxShareBtn");
 const closeLightbox = document.getElementById("closeLightbox");
 const themePicker = document.getElementById("themePicker");
 const themeLine = document.getElementById("themeLine");
@@ -62,6 +63,8 @@ let activeFilter = "All";
 let autoThemeInterval = null;
 let lookbookMode = false;
 let viewerComments = [];
+let activeLightboxPhoto = null;
+let activeLightboxCardId = "";
 
 function hasGiscusConfig() {
   return Boolean(
@@ -599,16 +602,18 @@ function renderGallery(photos, filter) {
       await sharePhoto(photo, cardId);
     });
 
-    card.querySelector("button").addEventListener("click", () => openLightbox(photo));
+    card.querySelector("button").addEventListener("click", () => openLightbox(photo, cardId));
     card.appendChild(shareButton);
     galleryGrid.appendChild(card);
   });
 }
 
-function openLightbox(photo) {
+function openLightbox(photo, cardId) {
   lightboxImage.src = photo.src;
   lightboxImage.alt = photo.alt || photo.title || "Portfolio photo";
   lightboxTitle.textContent = photo.title || "Untitled";
+  activeLightboxPhoto = photo;
+  activeLightboxCardId = cardId || "";
 
   const metaParts = [photo.category, photo.location, photo.year].filter(Boolean);
   lightboxMeta.textContent = metaParts.join(" • ");
@@ -623,6 +628,15 @@ function closeModal() {
 }
 
 closeLightbox.addEventListener("click", closeModal);
+if (lightboxShareBtn) {
+  lightboxShareBtn.addEventListener("click", async () => {
+    if (!activeLightboxPhoto) {
+      return;
+    }
+
+    await sharePhoto(activeLightboxPhoto, activeLightboxCardId || "photo-lightbox");
+  });
+}
 lightbox.addEventListener("click", (event) => {
   const rect = lightbox.getBoundingClientRect();
   const insideDialog =

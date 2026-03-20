@@ -714,6 +714,22 @@ body[data-theme="sunset-pop"] .lightbox {
   cursor: pointer;
 }
 
+.lightbox-share-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 2.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.66rem;
+  cursor: pointer;
+}
+
 @keyframes riseIn {
   from {
     transform: translateY(18px) rotate(var(--card-tilt));
